@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-02-10T12:13:55.118Z",
+  "entries": {
+    "arctic_teal": "posters/templates/venice_arctic_teal_20260210_121148.png",
+    "autumn": "posters/templates/vancouver_autumn_20260210_121150.png",
+    "blueprint": "posters/templates/new_york_blueprint_20260210_121151.png",
+    "contrast_zones": "posters/templates/istanbul_contrast_zones_20260210_121152.png",
+    "copper_patina": "posters/templates/cairo_copper_patina_20260210_121154.png",
+    "desert_night": "posters/templates/dubai_desert_night_20260210_121157.png",
+    "emerald": "posters/templates/stockholm_emerald_20260210_121159.png",
+    "forest": "posters/templates/cape_town_forest_20260210_121201.png",
+    "gradient_roads": "posters/templates/san_francisco_gradient_roads_20260210_121203.png",
+    "japanese_ink": "posters/templates/tokyo_japanese_ink_20260210_121204.png",
+    "midnight_blue": "posters/templates/sydney_midnight_blue_20260210_121206.png",
+    "monochrome_blue": "posters/templates/chicago_monochrome_blue_20260210_121209.png",
+    "neon_cyberpunk": "posters/templates/hong_kong_neon_cyberpunk_20260210_121211.png",
+    "noir": "posters/templates/london_noir_20260210_121213.png",
+    "ocean": "posters/templates/amsterdam_ocean_20260210_121215.png",
+    "pastel_dream": "posters/templates/paris_pastel_dream_20260210_121218.png",
+    "sage_minimal": "posters/templates/singapore_sage_minimal_20260210_121219.png",
+    "sunset": "posters/templates/rio_de_janeiro_sunset_20260210_121220.png",
+    "terracotta": "posters/templates/rome_terracotta_20260210_121222.png",
+    "warm_beige": "posters/templates/barcelona_warm_beige_20260210_121355.png"
+  }
+}
