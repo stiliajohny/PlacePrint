@@ -75,8 +75,8 @@ All variables are optional. If omitted, sane defaults are used.
 | Variable | Default | Purpose |
 |---|---|---|
 | `LOG_LEVEL` | `info` | `debug`, `info`, `warn`, or `error` logging |
-| `POSTERS_DIR` | `posters` | Output directory for generated files |
-| `CACHE_DIR` | `cache` | Cache directory for API responses/assets |
+| `POSTERS_DIR` | `posters` (local) / `/tmp/posters` (serverless fallback) | Output directory for generated files |
+| `CACHE_DIR` | `cache` (local) / `/tmp/cache` (serverless fallback) | Cache directory for API responses/assets |
 | `NOMINATIM_SEARCH_URL` | `https://nominatim.openstreetmap.org/search` | Geocoding endpoint |
 | `OVERPASS_API_URLS` | `https://overpass-api.de/api/interpreter,https://overpass.kumi.systems/api/interpreter,https://overpass.private.coffee/api/interpreter` | Comma-separated Overpass endpoints (failover list) |
 | `OVERPASS_API_URL` | none | Single endpoint fallback if `OVERPASS_API_URLS` is not set |
