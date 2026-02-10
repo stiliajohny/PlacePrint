@@ -42,3 +42,7 @@ test_venv/
 htmlcov/
 .coverage
 .pytest_cache/
+
+# Keep public assets trackable even if a global ignore blocks "Public/".
+!public/
+!public/**
