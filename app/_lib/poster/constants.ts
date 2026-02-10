@@ -7,13 +7,23 @@ export const PUBLIC_DIR = path.join(PROJECT_ROOT, "public");
 export const PUBLIC_POSTERS_DIR = path.join(PUBLIC_DIR, "posters");
 
 function runningInServerlessRuntime(): boolean {
-  return Boolean(process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT);
+  return Boolean(
+    process.env.NETLIFY ||
+      process.env.AWS_LAMBDA_FUNCTION_NAME ||
+      process.env.LAMBDA_TASK_ROOT ||
+      process.env.AWS_EXECUTION_ENV ||
+      PROJECT_ROOT.startsWith("/var/task")
+  );
 }
 
 function resolveWritablePath(input: string | undefined, fallback: string): string {
   const value = input?.trim();
   if (value) {
-    return path.isAbsolute(value) ? value : path.join(PROJECT_ROOT, value);
+    if (path.isAbsolute(value)) {
+      return value;
+    }
+
+    return runningInServerlessRuntime() ? path.join(tmpdir(), value) : path.join(PROJECT_ROOT, value);
   }
 
   if (runningInServerlessRuntime()) {

@@ -87,6 +87,8 @@ All variables are optional. If omitted, sane defaults are used.
 | `OSM_USER_AGENT` | `city_map_poster_js` | User-Agent for OSM API requests |
 | `GOOGLE_FONTS_USER_AGENT` | browser-like default | User-Agent for Google Fonts CSS/font fetch |
 
+On Netlify/AWS Lambda, only `/tmp` is writable. Set `POSTERS_DIR` and `CACHE_DIR` to absolute `/tmp/...` paths in your Netlify environment variables.
+
 Example `.env`:
 
 ```bash
