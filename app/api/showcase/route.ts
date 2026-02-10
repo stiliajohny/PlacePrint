@@ -3,7 +3,14 @@ import path from "node:path";
 
 import { NextResponse } from "next/server";
 
-import { GENERATED_TEMPLATES_DIR, GENERATED_TEMPLATES_SUBDIR, POSTERS_DIR } from "@/app/_lib/poster/constants";
+import {
+  GENERATED_TEMPLATES_DIR,
+  GENERATED_TEMPLATES_PUBLIC_DIR,
+  GENERATED_TEMPLATES_SUBDIR,
+  POSTERS_DIR,
+  PUBLIC_DIR,
+  PUBLIC_POSTERS_DIR
+} from "@/app/_lib/poster/constants";
 import { ensurePosterDirs } from "@/app/_lib/poster/cache";
 import { generatePosterViaJsWithOptions } from "@/app/_lib/poster/js-generator";
 import { logger } from "@/app/_lib/poster/logger";
@@ -17,8 +24,14 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MANIFEST_FILE = path.join(POSTERS_DIR, "showcase_manifest.json");
+const MANIFEST_FILE = path.join(PUBLIC_POSTERS_DIR, "showcase_manifest.json");
 const GENERATED_TEMPLATES_RELATIVE_DIR = path.posix.join("posters", GENERATED_TEMPLATES_SUBDIR);
+
+type PosterFileLocation = "public" | "posters";
+type LocatedPosterFile = {
+  relativePath: string;
+  location: PosterFileLocation;
+};
 
 type ShowcaseItem = {
   themeId: string;
@@ -66,7 +79,24 @@ function normalizePosterRelativePath(relativePath: string): string | null {
   return normalized;
 }
 
-function toAbsolutePosterPath(relativePath: string | null | undefined): string | null {
+function toAbsolutePublicPath(normalizedPath: string): string {
+  return path.join(PUBLIC_DIR, normalizedPath);
+}
+
+function toAbsolutePosterPath(normalizedPath: string): string {
+  return path.join(POSTERS_DIR, normalizedPath.slice("posters/".length));
+}
+
+async function canAccess(absolutePath: string): Promise<boolean> {
+  try {
+    await fs.access(absolutePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function locatePosterFile(relativePath: string | null | undefined): Promise<LocatedPosterFile | null> {
   if (!relativePath) {
     return null;
   }
@@ -76,7 +106,21 @@ function toAbsolutePosterPath(relativePath: string | null | undefined): string |
     return null;
   }
 
-  return path.join(POSTERS_DIR, normalized.slice("posters/".length));
+  if (await canAccess(toAbsolutePublicPath(normalized))) {
+    return {
+      relativePath: normalized,
+      location: "public"
+    };
+  }
+
+  if (await canAccess(toAbsolutePosterPath(normalized))) {
+    return {
+      relativePath: normalized,
+      location: "posters"
+    };
+  }
+
+  return null;
 }
 
 async function readManifest(): Promise<ShowcaseManifest> {
@@ -108,30 +152,25 @@ async function readManifest(): Promise<ShowcaseManifest> {
 }
 
 async function writeManifest(manifest: ShowcaseManifest): Promise<void> {
-  await ensurePosterDirs([POSTERS_DIR]);
+  await ensurePosterDirs([PUBLIC_POSTERS_DIR]);
   await fs.writeFile(MANIFEST_FILE, JSON.stringify(manifest, null, 2), "utf8");
 }
 
 async function relativePosterPathExists(relativePath: string | null | undefined): Promise<boolean> {
-  const absolutePath = toAbsolutePosterPath(relativePath);
-  if (!absolutePath) {
-    return false;
-  }
-
-  try {
-    await fs.access(absolutePath);
-    return true;
-  } catch {
-    return false;
-  }
+  const located = await locatePosterFile(relativePath);
+  return located !== null;
 }
 
-function previewUrl(relativePath: string | null): string | null {
-  if (!relativePath) {
+function previewUrl(file: LocatedPosterFile | null): string | null {
+  if (!file) {
     return null;
   }
 
-  return `/api/posters/file?path=${encodeURIComponent(relativePath)}`;
+  if (file.location === "public") {
+    return `/${file.relativePath}`;
+  }
+
+  return `/api/posters/file?path=${encodeURIComponent(file.relativePath)}`;
 }
 
 async function findLatestThemePosterPathInDir(
@@ -154,13 +193,27 @@ async function findLatestThemePosterPathInDir(
 }
 
 async function findLatestThemePosterPath(themeId: string): Promise<string | null> {
-  const fromTemplates = await findLatestThemePosterPathInDir(
+  const fromPublicTemplates = await findLatestThemePosterPathInDir(
+    themeId,
+    GENERATED_TEMPLATES_PUBLIC_DIR,
+    GENERATED_TEMPLATES_RELATIVE_DIR
+  );
+  if (fromPublicTemplates) {
+    return fromPublicTemplates;
+  }
+
+  const fromLegacyTemplates = await findLatestThemePosterPathInDir(
     themeId,
     GENERATED_TEMPLATES_DIR,
     GENERATED_TEMPLATES_RELATIVE_DIR
   );
-  if (fromTemplates) {
-    return fromTemplates;
+  if (fromLegacyTemplates) {
+    return fromLegacyTemplates;
+  }
+
+  const fromPublicPosters = await findLatestThemePosterPathInDir(themeId, PUBLIC_POSTERS_DIR, "posters");
+  if (fromPublicPosters) {
+    return fromPublicPosters;
   }
 
   return findLatestThemePosterPathInDir(themeId, POSTERS_DIR, "posters");
@@ -192,8 +245,8 @@ async function buildShowcaseResponse(errors: string[]): Promise<ShowcaseResponse
     }
 
     const storedPath = manifest.entries[seed.themeId] ?? (await findLatestThemePosterPath(seed.themeId));
-    const hasFile = await relativePosterPathExists(storedPath);
-    const relativePath = hasFile ? storedPath : null;
+    const located = await locatePosterFile(storedPath);
+    const relativePath = located?.relativePath ?? null;
 
     items.push({
       themeId: seed.themeId,
@@ -207,7 +260,7 @@ async function buildShowcaseResponse(errors: string[]): Promise<ShowcaseResponse
       distance: seed.distance,
       note: seed.note,
       relativePath,
-      previewUrl: previewUrl(relativePath)
+      previewUrl: previewUrl(located)
     });
   }
 
@@ -266,7 +319,9 @@ export async function POST(request: Request) {
 
       try {
         const run = await generatePosterViaJsWithOptions(buildShowcasePosterRequest(seed), {
-          outputSubdir: GENERATED_TEMPLATES_SUBDIR
+          outputSubdir: GENERATED_TEMPLATES_SUBDIR,
+          outputRootDir: PUBLIC_POSTERS_DIR,
+          outputUrlMode: "static"
         });
         const output = run.outputs[0];
 

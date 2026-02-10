@@ -32,8 +32,12 @@ import type {
   RoadFeature
 } from "@/app/_lib/poster/types";
 
+type OutputUrlMode = "api" | "static";
+
 type GeneratePosterOptions = {
   outputSubdir?: string;
+  outputRootDir?: string;
+  outputUrlMode?: OutputUrlMode;
 };
 
 function normalizeOutputSubdir(input: string | undefined): string {
@@ -58,6 +62,19 @@ function buildRelativeOutputPath(fileName: string, outputSubdir: string): string
   return outputSubdir
     ? path.posix.join("posters", outputSubdir, fileName)
     : path.posix.join("posters", fileName);
+}
+
+function resolveOutputRootDir(input: string | undefined): string {
+  const value = input?.trim();
+  if (!value) {
+    return POSTERS_DIR;
+  }
+
+  return path.isAbsolute(value) ? value : path.join(process.cwd(), value);
+}
+
+function normalizeOutputUrlMode(input: OutputUrlMode | undefined): OutputUrlMode {
+  return input === "static" ? "static" : "api";
 }
 
 function getDisplayPoint(input: PosterRequest): LatLon {
@@ -216,11 +233,13 @@ function createScene(params: {
   };
 }
 
-function toPosterOutput(relativePath: string): PosterOutput {
+function toPosterOutput(relativePath: string, outputUrlMode: OutputUrlMode): PosterOutput {
   const fileName = path.basename(relativePath);
   const format = path.extname(relativePath).replace(".", "").toLowerCase();
-  const encodedPath = encodeURIComponent(relativePath);
-  const downloadUrl = `/api/posters/file?path=${encodedPath}`;
+  const downloadUrl =
+    outputUrlMode === "static"
+      ? `/${relativePath}`
+      : `/api/posters/file?path=${encodeURIComponent(relativePath)}`;
 
   return {
     relativePath,
@@ -253,7 +272,9 @@ export async function generatePosterViaJsWithOptions(
   stderr: string;
 }> {
   const outputSubdir = normalizeOutputSubdir(options.outputSubdir);
-  const outputDir = outputSubdir ? path.join(POSTERS_DIR, outputSubdir) : POSTERS_DIR;
+  const outputRootDir = resolveOutputRootDir(options.outputRootDir);
+  const outputUrlMode = normalizeOutputUrlMode(options.outputUrlMode);
+  const outputDir = outputSubdir ? path.join(outputRootDir, outputSubdir) : outputRootDir;
 
   await ensurePosterDirs([outputDir]);
 
@@ -342,7 +363,7 @@ export async function generatePosterViaJsWithOptions(
     await fs.writeFile(absolutePath, fileBuffer);
 
     const relativePath = buildRelativeOutputPath(fileName, outputSubdir);
-    outputs.push(toPosterOutput(relativePath));
+    outputs.push(toPosterOutput(relativePath, outputUrlMode));
 
     logs.push(`Saved: ${relativePath}`);
     logger.info("Poster saved", { relativePath, format: input.format, themeName });

@@ -2,6 +2,8 @@ import path from "node:path";
 
 export const PROJECT_ROOT = process.cwd();
 export const THEMES_DIR = path.join(PROJECT_ROOT, "themes");
+export const PUBLIC_DIR = path.join(PROJECT_ROOT, "public");
+export const PUBLIC_POSTERS_DIR = path.join(PUBLIC_DIR, "posters");
 
 function resolvePathFromRoot(input: string | undefined, fallback: string): string {
   const value = input?.trim();
@@ -15,6 +17,7 @@ function resolvePathFromRoot(input: string | undefined, fallback: string): strin
 export const POSTERS_DIR = resolvePathFromRoot(process.env.POSTERS_DIR, "posters");
 export const GENERATED_TEMPLATES_SUBDIR = "templates";
 export const GENERATED_TEMPLATES_DIR = path.join(POSTERS_DIR, GENERATED_TEMPLATES_SUBDIR);
+export const GENERATED_TEMPLATES_PUBLIC_DIR = path.join(PUBLIC_POSTERS_DIR, GENERATED_TEMPLATES_SUBDIR);
 export const CACHE_DIR = resolvePathFromRoot(process.env.CACHE_DIR, "cache");
 export const FONTS_DIR = path.join(PROJECT_ROOT, "fonts");
 export const FONT_CACHE_DIR = path.join(FONTS_DIR, "cache");

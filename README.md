@@ -4,8 +4,8 @@ Place Print is a full-stack Next.js app that generates printable city map poster
 
 This README is for the web app in this repository (not the legacy Python tooling).
 
-![Blueprint preview](posters/templates/new_york_blueprint_20260209_214538.png)
-![Japanese Ink preview](posters/templates/tokyo_japanese_ink_20260209_214551.png)
+![Blueprint preview](public/posters/templates/new_york_blueprint_20260210_112417.png)
+![Japanese Ink preview](public/posters/templates/tokyo_japanese_ink_20260210_112622.png)
 
 ## What It Does
 
@@ -192,7 +192,7 @@ Returns the theme gallery metadata + available preview links.
 
 ### `POST /api/showcase` (development only)
 
-Generates missing (or all) showcase previews in `posters/templates`.
+Generates missing (or all) showcase previews in `public/posters/templates`.
 
 Request body:
 
@@ -230,8 +230,8 @@ Add a new `themes/<id>.json` file and it will appear in `/api/themes` and the ap
 
 ```text
 posters/                         # generated outputs
-posters/templates/               # showcase preview outputs
-posters/showcase_manifest.json   # showcase metadata
+public/posters/templates/        # showcase preview outputs
+public/posters/showcase_manifest.json # showcase metadata
 cache/                           # geocoding and Overpass cache files
 fonts/cache/                     # downloaded Google font files
 ```
@@ -267,6 +267,7 @@ app/
   _lib/poster/          # geocoding, OSM fetch, rendering, validation, storage
 themes/                 # theme definitions (JSON)
 posters/                # generated outputs
+public/posters/         # showcase previews + manifest
 cache/                  # request cache
 fonts/                  # bundled + cached fonts
 ```
