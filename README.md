@@ -86,6 +86,12 @@ All variables are optional. If omitted, sane defaults are used.
 | `HTTP_TIMEOUT_MS` | `45000` | Client-side request timeout |
 | `OSM_USER_AGENT` | `city_map_poster_js` | User-Agent for OSM API requests |
 | `GOOGLE_FONTS_USER_AGENT` | browser-like default | User-Agent for Google Fonts CSS/font fetch |
+| `SERVERLESS_MAX_COMPENSATED_DISTANCE_METERS` | `5000` | Serverless-only cap for computed map query radius |
+| `SERVERLESS_MAX_ROAD_FEATURES` | `14000` | Serverless-only cap for number of roads kept before rendering |
+| `SERVERLESS_MAX_ROAD_POINTS` | `28` | Serverless-only cap for points kept per road polyline |
+| `SERVERLESS_MAX_WATER_POLYGONS` | `650` | Serverless-only cap for water polygons kept before rendering |
+| `SERVERLESS_MAX_PARK_POLYGONS` | `900` | Serverless-only cap for park polygons kept before rendering |
+| `SERVERLESS_MAX_RING_POINTS` | `120` | Serverless-only cap for points kept per polygon ring |
 
 On Netlify/AWS Lambda, only `/tmp` is writable. Set `POSTERS_DIR` and `CACHE_DIR` to absolute `/tmp/...` paths in your Netlify environment variables.
 

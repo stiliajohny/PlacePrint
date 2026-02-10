@@ -16,6 +16,8 @@ function runningInServerlessRuntime(): boolean {
   );
 }
 
+export const IS_SERVERLESS_RUNTIME = runningInServerlessRuntime();
+
 function resolveWritablePath(input: string | undefined, fallback: string): string {
   const value = input?.trim();
   if (value) {
@@ -23,10 +25,10 @@ function resolveWritablePath(input: string | undefined, fallback: string): strin
       return value;
     }
 
-    return runningInServerlessRuntime() ? path.join(tmpdir(), value) : path.join(PROJECT_ROOT, value);
+    return IS_SERVERLESS_RUNTIME ? path.join(tmpdir(), value) : path.join(PROJECT_ROOT, value);
   }
 
-  if (runningInServerlessRuntime()) {
+  if (IS_SERVERLESS_RUNTIME) {
     return path.join(tmpdir(), fallback);
   }
 

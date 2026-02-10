@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { DEFAULT_DPI, POSTERS_DIR } from "@/app/_lib/poster/constants";
+import { DEFAULT_DPI, IS_SERVERLESS_RUNTIME, POSTERS_DIR } from "@/app/_lib/poster/constants";
 import { ensurePosterDirs } from "@/app/_lib/poster/cache";
 import {
   buildLocalProjection,
@@ -39,6 +39,18 @@ type GeneratePosterOptions = {
   outputRootDir?: string;
   outputUrlMode?: OutputUrlMode;
 };
+
+const SERVERLESS_MAX_COMPENSATED_DISTANCE_METERS = Number.parseFloat(
+  process.env.SERVERLESS_MAX_COMPENSATED_DISTANCE_METERS?.trim() || "5000"
+);
+const SERVERLESS_MAX_ROAD_FEATURES = Number.parseInt(process.env.SERVERLESS_MAX_ROAD_FEATURES?.trim() || "14000", 10);
+const SERVERLESS_MAX_ROAD_POINTS = Number.parseInt(process.env.SERVERLESS_MAX_ROAD_POINTS?.trim() || "28", 10);
+const SERVERLESS_MAX_WATER_POLYGONS = Number.parseInt(
+  process.env.SERVERLESS_MAX_WATER_POLYGONS?.trim() || "650",
+  10
+);
+const SERVERLESS_MAX_PARK_POLYGONS = Number.parseInt(process.env.SERVERLESS_MAX_PARK_POLYGONS?.trim() || "900", 10);
+const SERVERLESS_MAX_RING_POINTS = Number.parseInt(process.env.SERVERLESS_MAX_RING_POINTS?.trim() || "120", 10);
 
 function normalizeOutputSubdir(input: string | undefined): string {
   const value = input?.trim();
@@ -255,6 +267,103 @@ function overpassCompensatedDistance(request: PosterRequest): number {
   return (request.distance * (Math.max(request.height, request.width) / Math.min(request.height, request.width))) / 4;
 }
 
+function clampCount(input: number, fallback: number): number {
+  if (!Number.isFinite(input) || input < 1) {
+    return fallback;
+  }
+
+  return Math.max(1, Math.round(input));
+}
+
+function roadPriority(highway: string): number {
+  if (highway === "motorway" || highway === "motorway_link") {
+    return 0;
+  }
+
+  if (["trunk", "trunk_link", "primary", "primary_link"].includes(highway)) {
+    return 1;
+  }
+
+  if (["secondary", "secondary_link"].includes(highway)) {
+    return 2;
+  }
+
+  if (["tertiary", "tertiary_link"].includes(highway)) {
+    return 3;
+  }
+
+  if (highway === "residential") {
+    return 4;
+  }
+
+  if (["unclassified", "service", "living_street"].includes(highway)) {
+    return 5;
+  }
+
+  return 6;
+}
+
+function downsamplePoints<T>(points: T[], maxPoints: number): T[] {
+  if (points.length <= maxPoints) {
+    return points;
+  }
+
+  if (maxPoints <= 2) {
+    return [points[0], points[points.length - 1]];
+  }
+
+  const sampled: T[] = [points[0]];
+  const availableInterior = points.length - 2;
+  const targetInterior = maxPoints - 2;
+  const step = Math.ceil(availableInterior / targetInterior);
+
+  for (let index = 1; index < points.length - 1; index += step) {
+    sampled.push(points[index]);
+  }
+
+  sampled.push(points[points.length - 1]);
+
+  return sampled.length > maxPoints ? sampled.slice(0, maxPoints - 1).concat(points[points.length - 1]) : sampled;
+}
+
+function optimizeRoadFeatures(roads: RoadFeature[]): RoadFeature[] {
+  if (!IS_SERVERLESS_RUNTIME) {
+    return roads;
+  }
+
+  const maxRoadFeatures = clampCount(SERVERLESS_MAX_ROAD_FEATURES, 14000);
+  const maxRoadPoints = clampCount(SERVERLESS_MAX_ROAD_POINTS, 28);
+
+  const ranked = [...roads].sort((a, b) => {
+    const priorityDiff = roadPriority(a.highway) - roadPriority(b.highway);
+    if (priorityDiff !== 0) {
+      return priorityDiff;
+    }
+
+    return b.points.length - a.points.length;
+  });
+
+  return ranked.slice(0, maxRoadFeatures).map((road) => ({
+    ...road,
+    points: downsamplePoints(road.points, maxRoadPoints)
+  }));
+}
+
+function optimizePolygons(polygons: PolygonRings[], maxPolygonCount: number, maxRingPoints: number): PolygonRings[] {
+  if (!IS_SERVERLESS_RUNTIME) {
+    return polygons;
+  }
+
+  const cappedPolygonCount = clampCount(maxPolygonCount, 700);
+  const cappedRingPoints = clampCount(maxRingPoints, 120);
+
+  const ranked = [...polygons].sort((a, b) => (b.rings[0]?.length ?? 0) - (a.rings[0]?.length ?? 0));
+
+  return ranked.slice(0, cappedPolygonCount).map((polygon) => ({
+    rings: polygon.rings.map((ring) => downsamplePoints(ring, cappedRingPoints))
+  }));
+}
+
 export async function generatePosterViaJs(input: PosterRequest): Promise<{
   outputs: PosterOutput[];
   stdout: string;
@@ -297,8 +406,18 @@ export async function generatePosterViaJsWithOptions(
 
   logs.push(`Coordinates: ${point.lat.toFixed(6)}, ${point.lon.toFixed(6)}`);
 
-  const compensatedDist = overpassCompensatedDistance(input);
+  const requestedCompensatedDist = overpassCompensatedDistance(input);
+  const compensatedDist =
+    IS_SERVERLESS_RUNTIME && Number.isFinite(SERVERLESS_MAX_COMPENSATED_DISTANCE_METERS)
+      ? Math.min(requestedCompensatedDist, Math.max(500, SERVERLESS_MAX_COMPENSATED_DISTANCE_METERS))
+      : requestedCompensatedDist;
+
   logs.push(`Compensated distance: ${compensatedDist.toFixed(2)}m`);
+  if (compensatedDist < requestedCompensatedDist) {
+    logs.push(
+      `Compensated distance was capped from ${requestedCompensatedDist.toFixed(2)}m to ${compensatedDist.toFixed(2)}m for serverless runtime stability.`
+    );
+  }
 
   const [roadsRaw, waterRaw, parksRaw, themes, fonts] = await Promise.all([
     fetchRoads(point, compensatedDist),
@@ -308,7 +427,17 @@ export async function generatePosterViaJsWithOptions(
     loadFonts(input.fontFamily)
   ]);
 
+  const roads = optimizeRoadFeatures(roadsRaw);
+  const water = optimizePolygons(waterRaw, SERVERLESS_MAX_WATER_POLYGONS, SERVERLESS_MAX_RING_POINTS);
+  const parks = optimizePolygons(parksRaw, SERVERLESS_MAX_PARK_POLYGONS, SERVERLESS_MAX_RING_POINTS);
+
   logs.push(`Roads: ${roadsRaw.length}, water polygons: ${waterRaw.length}, parks polygons: ${parksRaw.length}`);
+  if (IS_SERVERLESS_RUNTIME) {
+    logs.push(
+      `Optimized for serverless: roads ${roads.length}/${roadsRaw.length}, water ${water.length}/${waterRaw.length}, parks ${parks.length}/${parksRaw.length}.`
+    );
+  }
+
   logger.debug("Poster data fetched", {
     roads: roadsRaw.length,
     waterPolygons: waterRaw.length,
@@ -327,9 +456,9 @@ export async function generatePosterViaJsWithOptions(
     ? toPixelPoint(projectedCenter, widthPx, heightPx, limits)
     : null;
 
-  const projectedRoads = projectRoads(roadsRaw, projection, widthPx, heightPx, limits);
-  const projectedWater = projectPolygons(waterRaw, projection, widthPx, heightPx, limits);
-  const projectedParks = projectPolygons(parksRaw, projection, widthPx, heightPx, limits);
+  const projectedRoads = projectRoads(roads, projection, widthPx, heightPx, limits);
+  const projectedWater = projectPolygons(water, projection, widthPx, heightPx, limits);
+  const projectedParks = projectPolygons(parks, projection, widthPx, heightPx, limits);
 
   const outputs: PosterOutput[] = [];
 
