@@ -10,23 +10,10 @@ import {
   type JourneyPayload,
   type JourneyResult
 } from "@/app/_lib/poster/journey-storage";
-
-type PosterOutput = {
-  relativePath: string;
-  fileName: string;
-  format: string;
-  downloadUrl: string;
-  previewUrl: string | null;
-};
-
-type GenerateResponse = {
-  ok?: boolean;
-  outputs?: PosterOutput[];
-  logs?: string;
-  stderr?: string;
-  error?: string;
-  details?: string[];
-};
+import {
+  buildGenerationFailure,
+  readGenerateResponse
+} from "@/app/_lib/poster/client-generation";
 
 const LOADER_MESSAGES = [
   "Tracing road networks and water geometry...",
@@ -44,6 +31,8 @@ export function PosterGenerating() {
   const [messageIndex, setMessageIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string[]>([]);
+  const [errorTechnical, setErrorTechnical] = useState<string | null>(null);
   const [runNonce, setRunNonce] = useState(0);
 
   const payloadLocationLabel = payload
@@ -72,6 +61,8 @@ export function PosterGenerating() {
 
     const runGeneration = async () => {
       setError(null);
+      setErrorDetails([]);
+      setErrorTechnical(null);
       setIsRunning(true);
 
       let parsedPayload: JourneyPayload;
@@ -85,6 +76,8 @@ export function PosterGenerating() {
       } catch (payloadError) {
         if (!isCancelled) {
           setError(payloadError instanceof Error ? payloadError.message : "Could not read generation details.");
+          setErrorDetails([]);
+          setErrorTechnical(null);
           setIsRunning(false);
         }
         return;
@@ -127,6 +120,8 @@ export function PosterGenerating() {
             pollTimer = null;
             sessionStorage.removeItem(JOURNEY_GENERATION_LOCK_KEY);
             setError("Generation lock timed out. Please retry.");
+            setErrorDetails([]);
+            setErrorTechnical(null);
             setIsRunning(false);
           }
         }, 900);
@@ -145,10 +140,22 @@ export function PosterGenerating() {
           })
         });
 
-        const data = (await response.json()) as GenerateResponse;
+        const { data, rawText } = await readGenerateResponse(response);
         if (!response.ok) {
-          const details = data.details && data.details.length > 0 ? ` (${data.details.join(", ")})` : "";
-          throw new Error((data.error || "Poster generation failed.") + details);
+          const failure = buildGenerationFailure(response.status, data, rawText);
+          setError(failure.message);
+          setErrorDetails(failure.details);
+          setErrorTechnical(failure.technical);
+          setIsRunning(false);
+          return;
+        }
+
+        if (!data) {
+          setError("Poster generation failed: invalid server response.");
+          setErrorDetails(["The API returned non-JSON output."]);
+          setErrorTechnical(rawText.trim().slice(0, 8000) || null);
+          setIsRunning(false);
+          return;
         }
 
         const outputs = data.outputs ?? [];
@@ -166,6 +173,8 @@ export function PosterGenerating() {
       } catch (runError) {
         if (!isCancelled) {
           setError(runError instanceof Error ? runError.message : "Poster generation failed.");
+          setErrorDetails([]);
+          setErrorTechnical(null);
           setIsRunning(false);
         }
       } finally {
@@ -205,6 +214,19 @@ export function PosterGenerating() {
       {error ? (
         <div className="generating-error">
           <p className="error-copy">{error}</p>
+          {errorDetails.length > 0 ? (
+            <ul className="error-details">
+              {errorDetails.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          ) : null}
+          {errorTechnical ? (
+            <details className="logs">
+              <summary>Technical details</summary>
+              <pre>{errorTechnical}</pre>
+            </details>
+          ) : null}
           <div className="generating-actions">
             <button
               type="button"

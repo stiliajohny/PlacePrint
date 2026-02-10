@@ -2,6 +2,10 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
+import {
+  buildGenerationFailure,
+  readGenerateResponse
+} from "@/app/_lib/poster/client-generation";
 import { COUNTRY_OPTIONS } from "@/app/_lib/poster/countries";
 import type { MarkerIcon } from "@/app/_lib/poster/types";
 
@@ -17,15 +21,6 @@ type PosterOutput = {
   format: string;
   downloadUrl: string;
   previewUrl: string | null;
-};
-
-type GenerateResponse = {
-  ok?: boolean;
-  outputs?: PosterOutput[];
-  logs?: string;
-  stderr?: string;
-  error?: string;
-  details?: string[];
 };
 
 type SizePreset = {
@@ -145,6 +140,8 @@ export function PosterStudio() {
   const [isCustomDimensionsOpen, setIsCustomDimensionsOpen] = useState(false);
   const [logs, setLogs] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string[]>([]);
+  const [errorTechnical, setErrorTechnical] = useState<string | null>(null);
 
   useEffect(() => {
     const loadThemes = async () => {
@@ -229,6 +226,8 @@ export function PosterStudio() {
     event.preventDefault();
     setIsGenerating(true);
     setError(null);
+    setErrorDetails([]);
+    setErrorTechnical(null);
     setLogs("");
     setOutputs([]);
 
@@ -279,17 +278,29 @@ export function PosterStudio() {
         body: JSON.stringify(payload)
       });
 
-      const data = (await response.json()) as GenerateResponse;
+      const { data, rawText } = await readGenerateResponse(response);
 
       if (!response.ok) {
-        const joinedDetails = data.details && data.details.length > 0 ? ` (${data.details.join(", ")})` : "";
-        throw new Error((data.error ?? "Poster generation failed") + joinedDetails);
+        const failure = buildGenerationFailure(response.status, data, rawText);
+        setError(failure.message);
+        setErrorDetails(failure.details);
+        setErrorTechnical(failure.technical);
+        return;
+      }
+
+      if (!data) {
+        setError("Poster generation failed: invalid server response.");
+        setErrorDetails(["The API returned non-JSON output."]);
+        setErrorTechnical(rawText.trim().slice(0, 8000) || null);
+        return;
       }
 
       setOutputs(data.outputs ?? []);
       setLogs([data.logs, data.stderr].filter(Boolean).join("\n\n"));
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Poster generation failed");
+      setErrorDetails([]);
+      setErrorTechnical(null);
     } finally {
       setIsGenerating(false);
     }
@@ -717,7 +728,24 @@ export function PosterStudio() {
       <section className="results-panel">
         <h2>Generated Files</h2>
 
-        {error ? <p className="error-banner">{error}</p> : null}
+        {error ? (
+          <div className="generation-error-block">
+            <p className="error-copy">{error}</p>
+            {errorDetails.length > 0 ? (
+              <ul className="error-details">
+                {errorDetails.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+            ) : null}
+            {errorTechnical ? (
+              <details className="logs">
+                <summary>Technical details</summary>
+                <pre>{errorTechnical}</pre>
+              </details>
+            ) : null}
+          </div>
+        ) : null}
 
         {outputs.length === 0 && !error ? (
           <p className="quiet">No posters generated yet. Complete steps 1 and 2, then run step 3.</p>
