@@ -14,26 +14,26 @@ These are generated preview thumbnails currently in `public/posters/templates/`.
 
 | Theme | Example |
 |---|---|
-| Arctic Teal | ![Arctic Teal example](public/posters/templates/venice_arctic_teal_20260210_121148.png) |
-| Autumn | ![Autumn example](public/posters/templates/vancouver_autumn_20260210_121150.png) |
-| Blueprint | ![Blueprint example](public/posters/templates/new_york_blueprint_20260210_121151.png) |
-| Contrast Zones | ![Contrast Zones example](public/posters/templates/istanbul_contrast_zones_20260210_121152.png) |
-| Copper Patina | ![Copper Patina example](public/posters/templates/cairo_copper_patina_20260210_121154.png) |
-| Desert Night | ![Desert Night example](public/posters/templates/dubai_desert_night_20260210_121157.png) |
-| Emerald | ![Emerald example](public/posters/templates/stockholm_emerald_20260210_121159.png) |
-| Forest | ![Forest example](public/posters/templates/cape_town_forest_20260210_121201.png) |
-| Gradient Roads | ![Gradient Roads example](public/posters/templates/san_francisco_gradient_roads_20260210_121203.png) |
-| Japanese Ink | ![Japanese Ink example](public/posters/templates/tokyo_japanese_ink_20260210_121204.png) |
-| Midnight Blue | ![Midnight Blue example](public/posters/templates/sydney_midnight_blue_20260210_121206.png) |
-| Monochrome Blue | ![Monochrome Blue example](public/posters/templates/chicago_monochrome_blue_20260210_121209.png) |
-| Neon Cyberpunk | ![Neon Cyberpunk example](public/posters/templates/hong_kong_neon_cyberpunk_20260210_121211.png) |
-| Noir | ![Noir example](public/posters/templates/london_noir_20260210_121213.png) |
-| Ocean | ![Ocean example](public/posters/templates/amsterdam_ocean_20260210_121215.png) |
-| Pastel Dream | ![Pastel Dream example](public/posters/templates/paris_pastel_dream_20260210_121218.png) |
-| Sage Minimal | ![Sage Minimal example](public/posters/templates/singapore_sage_minimal_20260210_121219.png) |
-| Sunset | ![Sunset example](public/posters/templates/rio_de_janeiro_sunset_20260210_121220.png) |
-| Terracotta | ![Terracotta example](public/posters/templates/rome_terracotta_20260210_121222.png) |
-| Warm Beige | ![Warm Beige example](public/posters/templates/barcelona_warm_beige_20260210_121355.png) |
+| Arctic Teal | <img src="public/posters/templates/venice_arctic_teal_20260210_121148.png" alt="Arctic Teal example" width="180" /> |
+| Autumn | <img src="public/posters/templates/vancouver_autumn_20260210_121150.png" alt="Autumn example" width="180" /> |
+| Blueprint | <img src="public/posters/templates/new_york_blueprint_20260210_121151.png" alt="Blueprint example" width="180" /> |
+| Contrast Zones | <img src="public/posters/templates/istanbul_contrast_zones_20260210_121152.png" alt="Contrast Zones example" width="180" /> |
+| Copper Patina | <img src="public/posters/templates/cairo_copper_patina_20260210_121154.png" alt="Copper Patina example" width="180" /> |
+| Desert Night | <img src="public/posters/templates/dubai_desert_night_20260210_121157.png" alt="Desert Night example" width="180" /> |
+| Emerald | <img src="public/posters/templates/stockholm_emerald_20260210_121159.png" alt="Emerald example" width="180" /> |
+| Forest | <img src="public/posters/templates/cape_town_forest_20260210_121201.png" alt="Forest example" width="180" /> |
+| Gradient Roads | <img src="public/posters/templates/san_francisco_gradient_roads_20260210_121203.png" alt="Gradient Roads example" width="180" /> |
+| Japanese Ink | <img src="public/posters/templates/tokyo_japanese_ink_20260210_121204.png" alt="Japanese Ink example" width="180" /> |
+| Midnight Blue | <img src="public/posters/templates/sydney_midnight_blue_20260210_121206.png" alt="Midnight Blue example" width="180" /> |
+| Monochrome Blue | <img src="public/posters/templates/chicago_monochrome_blue_20260210_121209.png" alt="Monochrome Blue example" width="180" /> |
+| Neon Cyberpunk | <img src="public/posters/templates/hong_kong_neon_cyberpunk_20260210_121211.png" alt="Neon Cyberpunk example" width="180" /> |
+| Noir | <img src="public/posters/templates/london_noir_20260210_121213.png" alt="Noir example" width="180" /> |
+| Ocean | <img src="public/posters/templates/amsterdam_ocean_20260210_121215.png" alt="Ocean example" width="180" /> |
+| Pastel Dream | <img src="public/posters/templates/paris_pastel_dream_20260210_121218.png" alt="Pastel Dream example" width="180" /> |
+| Sage Minimal | <img src="public/posters/templates/singapore_sage_minimal_20260210_121219.png" alt="Sage Minimal example" width="180" /> |
+| Sunset | <img src="public/posters/templates/rio_de_janeiro_sunset_20260210_121220.png" alt="Sunset example" width="180" /> |
+| Terracotta | <img src="public/posters/templates/rome_terracotta_20260210_121222.png" alt="Terracotta example" width="180" /> |
+| Warm Beige | <img src="public/posters/templates/barcelona_warm_beige_20260210_121355.png" alt="Warm Beige example" width="180" /> |
 
 ## Quick Start
 
