@@ -43,6 +43,7 @@ export function ThemeShowcase() {
   const continueLinkRef = useRef<HTMLAnchorElement | null>(null);
 
   const generatedCount = useMemo(() => items.filter((item) => item.previewUrl).length, [items]);
+  const missingCount = Math.max(0, items.length - generatedCount);
   const hasItems = items.length > 0;
 
   useEffect(() => {
@@ -152,9 +153,11 @@ export function ThemeShowcase() {
         </p>
         {isDevelopment ? (
           <div className="showcase-action-row">
-            <button type="button" onClick={() => void generateShowcase(false)} disabled={isGenerating}>
-              {isGenerating ? "Generating maps..." : "Generate Missing Previews"}
-            </button>
+            {missingCount > 0 ? (
+              <button type="button" onClick={() => void generateShowcase(false)} disabled={isGenerating}>
+                {isGenerating ? "Generating maps..." : `Generate Missing Previews (${missingCount})`}
+              </button>
+            ) : null}
             <button
               type="button"
               className="ghost-button"

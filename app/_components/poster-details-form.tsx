@@ -9,7 +9,7 @@ import {
   JOURNEY_PAYLOAD_STORAGE_KEY,
   type JourneyPayload
 } from "@/app/_lib/poster/journey-storage";
-import { getShowcaseSeed } from "@/app/_lib/poster/theme-showcase";
+import { resolveShowcaseSeed } from "@/app/_lib/poster/theme-showcase";
 import type { MarkerIcon, MarkerSize } from "@/app/_lib/poster/types";
 
 type ThemeSummary = {
@@ -158,7 +158,10 @@ export function PosterDetailsForm() {
     () => themes.find((theme) => theme.id === form.theme),
     [themes, form.theme]
   );
-  const selectedSeed = useMemo(() => getShowcaseSeed(form.theme), [form.theme]);
+  const selectedSeed = useMemo(
+    () => (form.theme ? resolveShowcaseSeed(form.theme) : undefined),
+    [form.theme]
+  );
   const isCityCenterMode = form.centerMode === "city";
   const isCoordinateCenterMode = form.centerMode === "coordinates";
   const isMapCenterMode = form.centerMode === "map";

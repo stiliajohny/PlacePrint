@@ -17,7 +17,7 @@ import { logger } from "@/app/_lib/poster/logger";
 import { readAvailableThemes } from "@/app/_lib/poster/themes";
 import {
   buildShowcasePosterRequest,
-  THEME_SHOWCASE_SEEDS,
+  resolveShowcaseSeed,
   type ShowcaseManifest
 } from "@/app/_lib/poster/theme-showcase";
 
@@ -219,37 +219,34 @@ async function findLatestThemePosterPath(themeId: string): Promise<string | null
   return findLatestThemePosterPathInDir(themeId, POSTERS_DIR, "posters");
 }
 
+async function resolvePreviewForTheme(themeId: string, storedPath: string | null | undefined): Promise<LocatedPosterFile | null> {
+  const stored = await locatePosterFile(storedPath);
+  if (stored) {
+    return stored;
+  }
+
+  const discoveredPath = await findLatestThemePosterPath(themeId);
+  return locatePosterFile(discoveredPath);
+}
+
+function pruneManifestEntries(manifest: ShowcaseManifest, validThemeIds: Set<string>): void {
+  manifest.entries = Object.fromEntries(
+    Object.entries(manifest.entries).filter(([themeId]) => validThemeIds.has(themeId))
+  );
+}
+
 async function buildShowcaseResponse(errors: string[]): Promise<ShowcaseResponse> {
   const [themes, manifest] = await Promise.all([readAvailableThemes(), readManifest()]);
-  const themeById = new Map(themes.map((theme) => [theme.id, theme]));
+  pruneManifestEntries(manifest, new Set(themes.map((theme) => theme.id)));
   const items: ShowcaseItem[] = [];
 
-  for (const seed of THEME_SHOWCASE_SEEDS) {
-    const theme = themeById.get(seed.themeId);
-    if (!theme) {
-      items.push({
-        themeId: seed.themeId,
-        themeName: seed.themeId,
-        themeDescription: "",
-        colors: {},
-        city: seed.city,
-        country: seed.country,
-        latitude: seed.latitude,
-        longitude: seed.longitude,
-        distance: seed.distance,
-        note: seed.note,
-        relativePath: null,
-        previewUrl: null
-      });
-      continue;
-    }
-
-    const storedPath = manifest.entries[seed.themeId] ?? (await findLatestThemePosterPath(seed.themeId));
-    const located = await locatePosterFile(storedPath);
+  for (const theme of themes) {
+    const seed = resolveShowcaseSeed(theme.id);
+    const located = await resolvePreviewForTheme(theme.id, manifest.entries[theme.id]);
     const relativePath = located?.relativePath ?? null;
 
     items.push({
-      themeId: seed.themeId,
+      themeId: theme.id,
       themeName: theme.name,
       themeDescription: theme.description,
       colors: theme.colors,
@@ -304,17 +301,24 @@ export async function POST(request: Request) {
   try {
     const [themes, manifest] = await Promise.all([readAvailableThemes(), readManifest()]);
     const themeIds = new Set(themes.map((theme) => theme.id));
+    pruneManifestEntries(manifest, themeIds);
     const errors: string[] = [];
 
-    for (const seed of THEME_SHOWCASE_SEEDS) {
-      if (!themeIds.has(seed.themeId)) {
-        errors.push(`${seed.themeId}: theme not found`);
-        continue;
-      }
+    for (const theme of themes) {
+      const seed = resolveShowcaseSeed(theme.id);
 
-      const existingPath = manifest.entries[seed.themeId];
-      if (!regenerate && (await relativePosterPathExists(existingPath))) {
-        continue;
+      if (!regenerate) {
+        const existingPath = manifest.entries[theme.id];
+        if (await relativePosterPathExists(existingPath)) {
+          continue;
+        }
+
+        const discoveredPath = await findLatestThemePosterPath(theme.id);
+        const discovered = await locatePosterFile(discoveredPath);
+        if (discovered) {
+          manifest.entries[theme.id] = discovered.relativePath;
+          continue;
+        }
       }
 
       try {
@@ -326,14 +330,14 @@ export async function POST(request: Request) {
         const output = run.outputs[0];
 
         if (!output) {
-          errors.push(`${seed.themeId}: no output generated`);
+          errors.push(`${theme.id}: no output generated`);
           continue;
         }
 
-        manifest.entries[seed.themeId] = output.relativePath;
+        manifest.entries[theme.id] = output.relativePath;
       } catch (error) {
         const message = error instanceof Error ? error.message : "generation failed";
-        errors.push(`${seed.themeId}: ${message}`);
+        errors.push(`${theme.id}: ${message}`);
       }
     }
 

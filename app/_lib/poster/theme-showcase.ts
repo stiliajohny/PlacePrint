@@ -20,6 +20,59 @@ export const SHOWCASE_DIMENSIONS = {
   height: 6
 } as const;
 
+type ThemeShowcaseSeedTemplate = Omit<ThemeShowcaseSeed, "themeId">;
+
+const FALLBACK_THEME_SHOWCASE_SEEDS: ThemeShowcaseSeedTemplate[] = [
+  {
+    city: "Lisbon",
+    country: "Portugal",
+    latitude: "38.7223",
+    longitude: "-9.1393",
+    distance: 9000,
+    note: "Auto-selected showcase profile: waterfront hills and layered street grids."
+  },
+  {
+    city: "Seattle",
+    country: "USA",
+    latitude: "47.6062",
+    longitude: "-122.3321",
+    distance: 9500,
+    note: "Auto-selected showcase profile: water corridors with varied urban density."
+  },
+  {
+    city: "Buenos Aires",
+    country: "Argentina",
+    latitude: "-34.6037",
+    longitude: "-58.3816",
+    distance: 9800,
+    note: "Auto-selected showcase profile: broad avenues and dense city blocks."
+  },
+  {
+    city: "Osaka",
+    country: "Japan",
+    latitude: "34.6937",
+    longitude: "135.5023",
+    distance: 9000,
+    note: "Auto-selected showcase profile: river splits and compact downtown texture."
+  },
+  {
+    city: "Auckland",
+    country: "New Zealand",
+    latitude: "-36.8509",
+    longitude: "174.7645",
+    distance: 9800,
+    note: "Auto-selected showcase profile: bays, inlets, and mixed-density neighborhoods."
+  },
+  {
+    city: "Mexico City",
+    country: "Mexico",
+    latitude: "19.4326",
+    longitude: "-99.1332",
+    distance: 10500,
+    note: "Auto-selected showcase profile: large-scale street mesh with strong arterial lines."
+  }
+];
+
 export const THEME_SHOWCASE_SEEDS: ThemeShowcaseSeed[] = [
   {
     themeId: "arctic_teal",
@@ -295,6 +348,29 @@ export const THEME_SHOWCASE_SEEDS: ThemeShowcaseSeed[] = [
 
 export function getShowcaseSeed(themeId: string): ThemeShowcaseSeed | undefined {
   return THEME_SHOWCASE_SEEDS.find((seed) => seed.themeId === themeId);
+}
+
+function hashThemeId(themeId: string): number {
+  let value = 0;
+
+  for (let index = 0; index < themeId.length; index += 1) {
+    value = (value * 31 + themeId.charCodeAt(index)) >>> 0;
+  }
+
+  return value;
+}
+
+export function resolveShowcaseSeed(themeId: string): ThemeShowcaseSeed {
+  const curated = getShowcaseSeed(themeId);
+  if (curated) {
+    return curated;
+  }
+
+  const template = FALLBACK_THEME_SHOWCASE_SEEDS[hashThemeId(themeId) % FALLBACK_THEME_SHOWCASE_SEEDS.length];
+  return {
+    themeId,
+    ...template
+  };
 }
 
 export function buildShowcasePosterRequest(seed: ThemeShowcaseSeed): PosterRequest {
