@@ -1,0 +1,15 @@
+{
+  "name": "Terracotta",
+  "description": "Mediterranean warmth - terracotta and clay tones on soft cream",
+  "bg": "#F6EEE6",
+  "text": "#7A3D18",
+  "gradient_color": "#F6EEE6",
+  "water": "#AFC9CC",
+  "parks": "#EDE3D4",
+  "road_motorway": "#974826",
+  "road_primary": "#AF5A35",
+  "road_secondary": "#C37A5C",
+  "road_tertiary": "#D59A82",
+  "road_residential": "#E6C3AF",
+  "road_default": "#D59A82"
+}

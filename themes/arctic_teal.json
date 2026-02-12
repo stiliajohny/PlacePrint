@@ -1,0 +1,15 @@
+{
+  "name": "Arctic Teal",
+  "description": "Cool deep teal palette with bright aqua roads",
+  "bg": "#0E1F26",
+  "text": "#D9F2F3",
+  "gradient_color": "#0E1F26",
+  "water": "#12303A",
+  "parks": "#1B3C40",
+  "road_motorway": "#7EF2D2",
+  "road_primary": "#58D9C0",
+  "road_secondary": "#3FB8A8",
+  "road_tertiary": "#2E948D",
+  "road_residential": "#236E6F",
+  "road_default": "#2E948D"
+}

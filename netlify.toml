@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  POSTERS_DIR = "/tmp/posters"
+  CACHE_DIR = "/tmp/cache"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

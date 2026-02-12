@@ -1,0 +1,15 @@
+{
+  "name": "Desert Night",
+  "description": "Dark sand and ember tones inspired by twilight desert skies",
+  "bg": "#1E1A17",
+  "text": "#F2D6B3",
+  "gradient_color": "#1E1A17",
+  "water": "#2A2420",
+  "parks": "#332B24",
+  "road_motorway": "#E08A4E",
+  "road_primary": "#C97645",
+  "road_secondary": "#A9633F",
+  "road_tertiary": "#87523A",
+  "road_residential": "#684238",
+  "road_default": "#87523A"
+}

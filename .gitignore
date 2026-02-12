@@ -1,0 +1,48 @@
+cache/*
+
+# Virtual environments
+env/
+.env/
+.env
+.env.local
+.env.*.local
+.venv/
+venv/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+*.pyc
+__pycache__/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+.cache/*
+
+# Package manager
+uv.lock
+node_modules/
+.next/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+tsconfig.tsbuildinfo
+
+# Test outputs
+test_venv/
+htmlcov/
+.coverage
+.pytest_cache/
+
+# Keep public assets trackable even if a global ignore blocks "Public/".
+!public/
+!public/**

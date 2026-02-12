@@ -1,0 +1,15 @@
+{
+  "name": "Sage Minimal",
+  "description": "Light sage neutrals with calm botanical greens",
+  "bg": "#F3F6F1",
+  "text": "#3D4C44",
+  "gradient_color": "#F3F6F1",
+  "water": "#C9DADF",
+  "parks": "#DEE9D9",
+  "road_motorway": "#3F5A4E",
+  "road_primary": "#577364",
+  "road_secondary": "#739384",
+  "road_tertiary": "#93B1A2",
+  "road_residential": "#B8CEC1",
+  "road_default": "#93B1A2"
+}
