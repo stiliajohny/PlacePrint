@@ -200,6 +200,96 @@ export const THEME_SHOWCASE_SEEDS: ThemeShowcaseSeed[] = [
     longitude: "2.1734",
     distance: 7600,
     note: "Eixample blocks meeting old-town fabric."
+  },
+  {
+    themeId: "arid_turquoise",
+    city: "Santa Fe",
+    country: "USA",
+    latitude: "35.6870",
+    longitude: "-105.9378",
+    distance: 9400,
+    note: "Adobe-grid texture framed by dry washes and foothills."
+  },
+  {
+    themeId: "aurora_night",
+    city: "Reykjavik",
+    country: "Iceland",
+    latitude: "64.1466",
+    longitude: "-21.9426",
+    distance: 9000,
+    note: "Harbor edge and low-rise street web under polar-night contrast."
+  },
+  {
+    themeId: "citrus_grove",
+    city: "Valencia",
+    country: "Spain",
+    latitude: "39.4699",
+    longitude: "-0.3763",
+    distance: 8600,
+    note: "Old-quarter streets and broad avenues near the Turia corridor."
+  },
+  {
+    themeId: "cobalt_sunrise",
+    city: "Athens",
+    country: "Greece",
+    latitude: "37.9838",
+    longitude: "23.7275",
+    distance: 9800,
+    note: "Dense basin geometry with ring roads and historic core grain."
+  },
+  {
+    themeId: "electric_plum",
+    city: "Seoul",
+    country: "South Korea",
+    latitude: "37.5665",
+    longitude: "126.9780",
+    distance: 10500,
+    note: "River split and layered expressway network for neon-style contrast."
+  },
+  {
+    themeId: "lilac_nocturne",
+    city: "Kyoto",
+    country: "Japan",
+    latitude: "35.0116",
+    longitude: "135.7681",
+    distance: 8200,
+    note: "Ordered ward blocks with river arcs and temple-district texture."
+  },
+  {
+    themeId: "mint_chalk",
+    city: "Wellington",
+    country: "New Zealand",
+    latitude: "-41.2866",
+    longitude: "174.7756",
+    distance: 9200,
+    note: "Harbor bowl and hillside streets with a compact coastal footprint."
+  },
+  {
+    themeId: "moonlit_amber",
+    city: "Jaipur",
+    country: "India",
+    latitude: "26.9124",
+    longitude: "75.7873",
+    distance: 11000,
+    note: "Planned avenue grid and old-city geometry with bright arterial lines."
+  },
+  {
+    themeId: "rose_gold_dust",
+    city: "Marrakesh",
+    country: "Morocco",
+    latitude: "31.6295",
+    longitude: "-7.9811",
+    distance: 9000,
+    note: "Medina density contrasted against newer boulevards and garden districts."
+  },
+  {
+    themeId: "volcanic_ember",
+    city: "Naples",
+    country: "Italy",
+    latitude: "40.8518",
+    longitude: "14.2681",
+    distance: 9800,
+    note: "Bay-edge road weave and volcanic terrain transitions around the city."
   }
 ];
 

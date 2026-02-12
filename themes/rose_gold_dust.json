@@ -1,0 +1,15 @@
+{
+  "name": "Rose Gold Dust",
+  "description": "Blush neutrals with rose-gold streets and warm metal undertones",
+  "bg": "#FDF3F0",
+  "text": "#7A3E46",
+  "gradient_color": "#FDF3F0",
+  "water": "#E8D8D8",
+  "parks": "#F2E6DA",
+  "road_motorway": "#B76E79",
+  "road_primary": "#C7868D",
+  "road_secondary": "#D89EA2",
+  "road_tertiary": "#E5B9B5",
+  "road_residential": "#F0D4CE",
+  "road_default": "#D89EA2"
+}

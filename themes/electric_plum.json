@@ -1,0 +1,15 @@
+{
+  "name": "Electric Plum",
+  "description": "Dark plum backdrop with neon magenta, violet, and aqua roads",
+  "bg": "#170A24",
+  "text": "#F6E8FF",
+  "gradient_color": "#170A24",
+  "water": "#231336",
+  "parks": "#2D1740",
+  "road_motorway": "#FF4FD8",
+  "road_primary": "#8B5CFF",
+  "road_secondary": "#36D7FF",
+  "road_tertiary": "#24A9D6",
+  "road_residential": "#1B6E99",
+  "road_default": "#36D7FF"
+}

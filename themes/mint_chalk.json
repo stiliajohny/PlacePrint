@@ -1,0 +1,15 @@
+{
+  "name": "Mint Chalk",
+  "description": "Fresh chalky mint base with crisp botanical greens",
+  "bg": "#F3FBF6",
+  "text": "#1E5C4F",
+  "gradient_color": "#F3FBF6",
+  "water": "#CBEAE3",
+  "parks": "#DCF2D2",
+  "road_motorway": "#0E7C66",
+  "road_primary": "#1F9D7A",
+  "road_secondary": "#3EB489",
+  "road_tertiary": "#67C9A5",
+  "road_residential": "#9EDCC4",
+  "road_default": "#3EB489"
+}

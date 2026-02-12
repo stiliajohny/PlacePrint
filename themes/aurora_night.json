@@ -1,0 +1,15 @@
+{
+  "name": "Aurora Night",
+  "description": "Polar-night navy with electric mint and cyan roads",
+  "bg": "#081A2B",
+  "text": "#E8FFF8",
+  "gradient_color": "#081A2B",
+  "water": "#0D2E45",
+  "parks": "#133B3A",
+  "road_motorway": "#B7FF4A",
+  "road_primary": "#6FFFD2",
+  "road_secondary": "#3ED8C0",
+  "road_tertiary": "#2AA3A8",
+  "road_residential": "#1E6E86",
+  "road_default": "#2AA3A8"
+}

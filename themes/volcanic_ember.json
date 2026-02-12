@@ -1,0 +1,15 @@
+{
+  "name": "Volcanic Ember",
+  "description": "Dark basalt base with lava orange and ember red road hierarchy",
+  "bg": "#1A1111",
+  "text": "#FFD9C7",
+  "gradient_color": "#1A1111",
+  "water": "#2A1A1A",
+  "parks": "#30201D",
+  "road_motorway": "#FF6A00",
+  "road_primary": "#FF8E3C",
+  "road_secondary": "#E45A3A",
+  "road_tertiary": "#B74836",
+  "road_residential": "#7D3730",
+  "road_default": "#B74836"
+}

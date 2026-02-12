@@ -1,0 +1,15 @@
+{
+  "name": "Moonlit Amber",
+  "description": "Inky blue-black canvas with glowing amber and copper streets",
+  "bg": "#101A2F",
+  "text": "#FFD77A",
+  "gradient_color": "#101A2F",
+  "water": "#172643",
+  "parks": "#1E2F4D",
+  "road_motorway": "#FFC857",
+  "road_primary": "#F5A623",
+  "road_secondary": "#E07A2D",
+  "road_tertiary": "#B85E3C",
+  "road_residential": "#8A4A42",
+  "road_default": "#E07A2D"
+}

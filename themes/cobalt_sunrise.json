@@ -1,0 +1,15 @@
+{
+  "name": "Cobalt Sunrise",
+  "description": "Deep cobalt nightfield with sunrise oranges and apricot highlights",
+  "bg": "#142850",
+  "text": "#FFE9B8",
+  "gradient_color": "#142850",
+  "water": "#0E1C38",
+  "parks": "#1A3764",
+  "road_motorway": "#FFD166",
+  "road_primary": "#FFB347",
+  "road_secondary": "#FF8C42",
+  "road_tertiary": "#E66B6B",
+  "road_residential": "#B85C8A",
+  "road_default": "#FF8C42"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Citrus Grove",
+  "description": "Sunlit cream map with citrus-lime and tangerine road contrast",
+  "bg": "#FFF9EE",
+  "text": "#4A5A14",
+  "gradient_color": "#FFF9EE",
+  "water": "#D8EFE7",
+  "parks": "#EAF5CB",
+  "road_motorway": "#F08A24",
+  "road_primary": "#D9A404",
+  "road_secondary": "#9BBF30",
+  "road_tertiary": "#6FAA4A",
+  "road_residential": "#BFD79C",
+  "road_default": "#9BBF30"
+}

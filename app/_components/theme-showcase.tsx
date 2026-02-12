@@ -161,7 +161,7 @@ export function ThemeShowcase() {
               onClick={() => void generateShowcase(true)}
               disabled={isGenerating}
             >
-              Regenerate All 20
+              Regenerate All {items.length}
             </button>
           </div>
         ) : null}

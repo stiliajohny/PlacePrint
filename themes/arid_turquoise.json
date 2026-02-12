@@ -1,0 +1,15 @@
+{
+  "name": "Arid Turquoise",
+  "description": "Desert paper tones balanced with cool turquoise roads",
+  "bg": "#FAF2E5",
+  "text": "#2A5D63",
+  "gradient_color": "#FAF2E5",
+  "water": "#CFE9E7",
+  "parks": "#E5E7CC",
+  "road_motorway": "#009688",
+  "road_primary": "#2A9D8F",
+  "road_secondary": "#4DB6AC",
+  "road_tertiary": "#7CC5B8",
+  "road_residential": "#B4DCD0",
+  "road_default": "#4DB6AC"
+}

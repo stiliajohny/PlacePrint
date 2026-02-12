@@ -1,0 +1,15 @@
+{
+  "name": "Lilac Nocturne",
+  "description": "Soft lilac paper tone with layered violet road accents",
+  "bg": "#F5F0FA",
+  "text": "#4B3561",
+  "gradient_color": "#F5F0FA",
+  "water": "#D8CCE8",
+  "parks": "#E8DDF1",
+  "road_motorway": "#6E2DA8",
+  "road_primary": "#8F4CC6",
+  "road_secondary": "#A86FCE",
+  "road_tertiary": "#C197DD",
+  "road_residential": "#D8C0E8",
+  "road_default": "#A86FCE"
+}
