@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-10T12:13:55.118Z",
+  "generatedAt": "2026-02-12T20:37:57.573Z",
   "entries": {
     "arctic_teal": "posters/templates/venice_arctic_teal_20260210_121148.png",
     "autumn": "posters/templates/vancouver_autumn_20260210_121150.png",
@@ -20,6 +20,16 @@
     "sage_minimal": "posters/templates/singapore_sage_minimal_20260210_121219.png",
     "sunset": "posters/templates/rio_de_janeiro_sunset_20260210_121220.png",
     "terracotta": "posters/templates/rome_terracotta_20260210_121222.png",
-    "warm_beige": "posters/templates/barcelona_warm_beige_20260210_121355.png"
+    "warm_beige": "posters/templates/barcelona_warm_beige_20260210_121355.png",
+    "arid_turquoise": "posters/templates/santa_fe_arid_turquoise_20260212_203446.png",
+    "aurora_night": "posters/templates/reykjavik_aurora_night_20260212_203531.png",
+    "citrus_grove": "posters/templates/valencia_citrus_grove_20260212_203536.png",
+    "cobalt_sunrise": "posters/templates/athens_cobalt_sunrise_20260212_203541.png",
+    "electric_plum": "posters/templates/seoul_electric_plum_20260212_203555.png",
+    "lilac_nocturne": "posters/templates/kyoto_lilac_nocturne_20260212_203630.png",
+    "mint_chalk": "posters/templates/wellington_mint_chalk_20260212_203637.png",
+    "moonlit_amber": "posters/templates/jaipur_moonlit_amber_20260212_203725.png",
+    "rose_gold_dust": "posters/templates/marrakesh_rose_gold_dust_20260212_203728.png",
+    "volcanic_ember": "posters/templates/naples_volcanic_ember_20260212_203757.png"
   }
 }
